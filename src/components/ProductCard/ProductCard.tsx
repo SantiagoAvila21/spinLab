@@ -4,9 +4,9 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonImg,
-  IonButton,
 } from "@ionic/react";
 import { Product } from "../../types/product";
+import "./ProductCard.css";
 
 interface ProductCardProps {
   product: Product;
@@ -14,14 +14,18 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
-    <IonCard>
+    <IonCard
+      routerLink={`/product/${product.id}`}
+      button
+    >
       <IonImg src={product.image} alt={product.name} />
+
       <IonCardHeader>
         <IonCardTitle>{product.name}</IonCardTitle>
       </IonCardHeader>
+
       <IonCardContent>
         <p>${product.price.toLocaleString("es-CO")}</p>
-        <IonButton expand="block">Agregar al carrito</IonButton>
       </IonCardContent>
     </IonCard>
   );

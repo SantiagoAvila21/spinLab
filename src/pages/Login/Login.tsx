@@ -15,6 +15,7 @@ import {
   logInOutline,
   mailOutline,
   lockClosedOutline,
+  closeOutline,
 } from "ionicons/icons";
 import { useState, useRef } from "react";
 import "./Login.css";
@@ -32,6 +33,12 @@ const Login: React.FC = () => {
   return (
     <IonPage>
       <IonContent fullscreen className="ion-padding">
+        {/* Boton de cerrar */}
+        <IonButton fill="clear" routerLink="/" className="close-button">
+          <IonIcon icon={closeOutline} />
+        </IonButton>
+
+        
         <IonGrid className="login-container ion-height-full">
           <IonRow className="login-row">
             {/* Card de login */}
