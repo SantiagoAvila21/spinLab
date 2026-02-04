@@ -27,15 +27,12 @@ const Checkout: React.FC = () => {
   const [cvv, setCvv] = useState("");
 
   const handlePay = () => {
-    // acá luego puedes validar si quieres
     history.push("/checkout-success");
   };
 
   return (
     <AppLayout title="Checkout">
       <IonGrid className="ion-padding">
-
-        {/* Resumen */}
         <IonRow>
           <IonCol size="12">
             <IonText>
@@ -65,7 +62,7 @@ const Checkout: React.FC = () => {
           </IonCol>
         </IonRow>
 
-        {/* Formulario */}
+        {/* Formulario Tarjeta Credito */}
         <IonRow className="ion-margin-top">
           <IonCol size="12">
             <IonText>

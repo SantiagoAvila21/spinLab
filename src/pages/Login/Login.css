@@ -1,5 +1,3 @@
-/* ===== Layout base ===== */
-
 .login-container {
   height: 100%;
 }
@@ -15,8 +13,6 @@
 .full-height {
   min-height: 100vh;
 }
-
-/* ===== Boton de cerrar ===== */
 
 .close-button {
   position: absolute;
@@ -35,10 +31,7 @@
 .close-button:hover {
   --color: var(--ion-color-dark);
 }
-
-
-/* ===== Animación pelota ===== */
-
+/* ===== Pelota animada ===== */
 .ball-container {
   display: flex;
   flex-direction: column;
@@ -67,8 +60,6 @@
   color: var(--ion-color-primary);
 }
 
-/* ===== Animaciones ===== */
-
 @keyframes bounce {
   0%,
   100% {
@@ -91,8 +82,6 @@
   }
 }
 
-/* ===== Card Login ===== */
-
 .login-card {
   background: var(--ion-color-step-50);
   border-radius: 18px;
@@ -101,7 +90,6 @@
   border: 2px solid white;
 }
 
-/* ===== Header ===== */
 
 .login-header {
   text-align: center;
@@ -134,8 +122,6 @@
   color: var(--ion-color-medium);
 }
 
-/* ===== Inputs ===== */
-
 .input-item {
   --background: transparent;
   --border-radius: 12px;
@@ -151,8 +137,6 @@
   color: var(--ion-color-primary);
 }
 
-/* ===== Botón ===== */
-
 .login-button {
   --background: var(--ion-color-primary);
   --background-hover: var(--ion-color-primary-shade);
@@ -164,15 +148,11 @@
   letter-spacing: 0.5px;
 }
 
-/* ===== Links ===== */
-
 ion-button[fill="clear"] {
   --color: var(--ion-color-primary);
   text-transform: none;
   font-size: 0.85rem;
 }
-
-/* ===== Responsive ===== */
 
 @media (max-width: 768px) {
   .login-card {
