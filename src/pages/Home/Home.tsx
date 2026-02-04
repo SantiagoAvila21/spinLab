@@ -7,11 +7,17 @@ import {
   IonCol,
   IonSelect,
   IonSelectOption,
+  IonButton,
+  IonIcon,
+  IonLabel,
 } from "@ionic/react";
+
+import { closeCircleOutline } from "ionicons/icons";
 
 import AppLayout from "../../components/AppLayout/AppLayout";
 import { Product } from "../../types/product";
 import ProductCard from "../../components/ProductCard/ProductCard";
+import "./Home.css";
 
 const products: Product[] = [
   {
@@ -22,6 +28,7 @@ const products: Product[] = [
       "https://deporteka.com.co/wp-content/uploads/2022/05/35861_01-600x600.webp",
     category: "Raquetas",
     rating: 4.8,
+    brand: "Butterfly",
   },
   {
     id: 2,
@@ -30,6 +37,7 @@ const products: Product[] = [
     image: "https://revspin.net/images/blade/dhs-hurricane-301.jpg",
     category: "Raquetas",
     rating: 4.6,
+    brand: "DHS",
   },
   {
     id: 3,
@@ -38,6 +46,7 @@ const products: Product[] = [
     image: "https://revspin.net/images/balls/butterfly-3-star-40-plus-poly.jpg",
     category: "Pelotas",
     rating: 4.5,
+    brand: "Butterfly",
   },
   {
     id: 4,
@@ -47,6 +56,7 @@ const products: Product[] = [
       "https://revspin.net/images/rubber/dhs-neo-hurricane-3-provincial-blue-sponge.jpg",
     category: "Gomas",
     rating: 4.7,
+    brand: "DHS",
   },
   {
     id: 5,
@@ -56,6 +66,7 @@ const products: Product[] = [
       "https://images.weserv.nl/?url=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F715H6LW4MpL.jpg&w=640&q=100&output=webp",
     category: "Mesas",
     rating: 4.9,
+    brand: "Stiga",
   },
   {
     id: 6,
@@ -65,18 +76,23 @@ const products: Product[] = [
       "https://www.rocayaltura.co/4739-large_default/estuche-butterfly-2-raquetas.jpg",
     category: "Accesorios",
     rating: 4.4,
+    brand: "Butterfly",
   },
 ];
 
 const Home: React.FC = () => {
+  // Obtener todos las marcas distintas de cada producto usando un Set
+  const categories = Array.from(
+    new Set(products.map((product) => product.category)),
+  );
+  // Obtener todas las categorías distintas de cada producto usando un Set
+  const brands = Array.from(new Set(products.map((product) => product.brand)));
   return (
     <AppLayout title="SpinLab">
-      {/* Título / slogan */}
       <IonText className="ion-text-center ion-margin">
         <h2>Tu lugar para el tenis de mesa</h2>
       </IonText>
 
-      {/* GIF promocional */}
       <IonImg
         src="../../../public/assets/pingpongGif.gif"
         alt="Tenis de mesa promo"
@@ -92,28 +108,34 @@ const Home: React.FC = () => {
         </IonRow>
       </IonGrid>
 
+      <IonText className="ion-text-start ion-margin-start">Filtrar: </IonText>
+
       {/* Filtros */}
       <IonGrid className="ion-margin-top">
         <IonRow className="ion-justify-content-center ion-align-items-center">
           {/* Categoría */}
           <IonCol size="12" size-md="4" size-lg="3">
             <IonSelect placeholder="Categoría" interface="popover">
-              <IonSelectOption value="all">Todas</IonSelectOption>
-              <IonSelectOption value="Raquetas">Raquetas</IonSelectOption>
-              <IonSelectOption value="Gomas">Gomas</IonSelectOption>
-              <IonSelectOption value="Pelotas">Pelotas</IonSelectOption>
-              <IonSelectOption value="Mesas">Mesas</IonSelectOption>
-              <IonSelectOption value="Accesorios">Accesorios</IonSelectOption>
+              <IonSelectOption value="all">Categoría</IonSelectOption>
+
+              {categories.map((category) => (
+                <IonSelectOption key={category} value={category}>
+                  {category}
+                </IonSelectOption>
+              ))}
             </IonSelect>
           </IonCol>
 
           {/* Marca */}
           <IonCol size="12" size-md="4" size-lg="3">
             <IonSelect placeholder="Marca" interface="popover">
-              <IonSelectOption value="all">Todas</IonSelectOption>
-              <IonSelectOption value="Butterfly">Butterfly</IonSelectOption>
-              <IonSelectOption value="DHS">DHS</IonSelectOption>
-              <IonSelectOption value="Stiga">Stiga</IonSelectOption>
+              <IonSelectOption value="all">Marca</IonSelectOption>
+
+              {brands.map((brand) => (
+                <IonSelectOption key={brand} value={brand}>
+                  {brand}
+                </IonSelectOption>
+              ))}
             </IonSelect>
           </IonCol>
 
@@ -131,6 +153,13 @@ const Home: React.FC = () => {
           </IonCol>
         </IonRow>
       </IonGrid>
+
+      <div className="ion-filter-divbutton">
+        <IonButton fill="clear" slot="end" className="ion-margin-end">
+          <IonIcon slot="start" icon={closeCircleOutline} />
+          <IonLabel>Limpiar Filtro</IonLabel>
+        </IonButton>
+      </div>
 
       {/* Grid de productos */}
       <IonGrid>

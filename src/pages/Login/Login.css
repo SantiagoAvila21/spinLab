@@ -1,0 +1,175 @@
+/* ===== Layout base ===== */
+
+.login-container {
+  height: 100%;
+}
+
+.login-row {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.full-height {
+  min-height: 100vh;
+}
+
+/* ===== Animación pelota ===== */
+
+.ball-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.pingpong-ball-animated {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--ion-color-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bounce 2s infinite ease-in-out;
+  box-shadow:
+    0 10px 20px rgba(0, 0, 0, 0.25),
+    inset 0 -6px 12px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+
+.ball-icon {
+  font-size: 36px;
+  color: var(--ion-color-primary);
+}
+
+/* ===== Animaciones ===== */
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-28px) rotate(180deg);
+  }
+}
+
+@keyframes shadow {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(0.8);
+    opacity: 0.3;
+  }
+}
+
+/* ===== Card Login ===== */
+
+.login-card {
+  background: var(--ion-color-step-50);
+  border-radius: 18px;
+  padding: 2.2rem;
+  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.12);
+  border: 2px solid white;
+}
+
+/* ===== Header ===== */
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.logo-container {
+  display: inline-flex;
+  padding: 0.9rem;
+  border-radius: 50%;
+  background: var(--ion-color-primary);
+  margin-bottom: 1rem;
+}
+
+.logo-icon {
+  font-size: 2.2rem;
+  color: var(--ion-color-primary-contrast);
+}
+
+.login-header h1 {
+  margin: 0;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--ion-text-color);
+}
+
+.login-subtitle {
+  margin-top: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+}
+
+/* ===== Inputs ===== */
+
+.input-item {
+  --background: transparent;
+  --border-radius: 12px;
+  --border-color: var(--ion-color-step-200);
+  margin-bottom: 1.3rem;
+}
+
+.input-item.ion-focused {
+  --border-color: var(--ion-color-primary);
+}
+
+.input-item ion-icon {
+  color: var(--ion-color-primary);
+}
+
+/* ===== Botón ===== */
+
+.login-button {
+  --background: var(--ion-color-primary);
+  --background-hover: var(--ion-color-primary-shade);
+  --border-radius: 12px;
+  height: 48px;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===== Links ===== */
+
+ion-button[fill="clear"] {
+  --color: var(--ion-color-primary);
+  text-transform: none;
+  font-size: 0.85rem;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 768px) {
+  .login-card {
+    padding: 1.8rem 1.4rem;
+  }
+
+  .pingpong-ball-animated {
+    width: 56px;
+    height: 56px;
+  }
+
+  .ball-icon {
+    font-size: 28px;
+  }
+}
+
+@media (max-height: 600px) {
+  .ball-container {
+    display: none;
+  }
+}
