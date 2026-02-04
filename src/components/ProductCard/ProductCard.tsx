@@ -17,15 +17,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     <IonCard
       routerLink={`/product/${product.id}`}
       button
+      className="product-card"
     >
       <IonImg src={product.image} alt={product.name} />
 
       <IonCardHeader>
-        <IonCardTitle>{product.name}</IonCardTitle>
+        <IonCardTitle className="product-name">{product.name}</IonCardTitle>
       </IonCardHeader>
 
       <IonCardContent>
-        <p>${product.price.toLocaleString("es-CO")}</p>
+        <h2 className="product-price">
+          ${product.price.toLocaleString("es-CO")}
+        </h2>
       </IonCardContent>
     </IonCard>
   );

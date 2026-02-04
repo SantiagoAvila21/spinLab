@@ -9,10 +9,11 @@ import {
   IonFooter,
   IonText,
   IonBadge,
+  IonMenuToggle,
 } from "@ionic/react";
 import { cartOutline, addOutline, removeOutline } from "ionicons/icons";
 import "./CartMenu.css";
-import { CartItem } from "../types/CartItem";
+import { CartItem } from "../../types/CartItem";
 
 const cartItems: CartItem[] = [
   {
@@ -32,13 +33,12 @@ const cartItems: CartItem[] = [
 const CartMenu: React.FC = () => {
   const total = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
-    0
+    0,
   );
 
   return (
-    <IonMenu contentId="main" side="end" type="overlay">
+    <IonMenu menuId="cart-menu" contentId="main" side="end" type="overlay">
       <IonContent className="cart-content">
-
         {/* Header del carrito */}
         <div className="cart-header">
           <IonIcon icon={cartOutline} />
@@ -53,12 +53,12 @@ const CartMenu: React.FC = () => {
             <IonItem key={item.id} lines="none" className="cart-item">
               <IonLabel>
                 <h3>{item.name}</h3>
-                <p>${item.price.toLocaleString()}</p>
+                <p>${item.price.toLocaleString("es-CO")}</p>
               </IonLabel>
 
               {/* Contador */}
               <div className="cart-quantity">
-                <IonButton fill="clear" size="small" slot="end">
+                <IonButton fill="clear" size="small">
                   <IonIcon icon={removeOutline} />
                 </IonButton>
 
@@ -73,18 +73,24 @@ const CartMenu: React.FC = () => {
         </IonList>
       </IonContent>
 
-      {/* Footer con total y botón */}
+      {/* Footer */}
       <IonFooter className="cart-footer">
         <div className="cart-total">
           <IonText>Total</IonText>
           <IonText>
-            <strong>${total.toLocaleString()}</strong>
+            <strong>${total.toLocaleString("es-CO")}</strong>
           </IonText>
         </div>
-
-        <IonButton expand="block" className="checkout-button">
-          Comprar
-        </IonButton>
+        <IonMenuToggle>  
+          <IonButton
+            expand="block"
+            className="checkout-button"
+            disabled={cartItems.length === 0}
+            routerLink="/checkout"
+          >
+            Comprar
+          </IonButton>
+        </IonMenuToggle>
       </IonFooter>
     </IonMenu>
   );

@@ -7,7 +7,7 @@ import {
 import { IonReactRouter } from "@ionic/react-router";
 import { Redirect, Route } from "react-router-dom";
 
-import Menu from "./components/CartMenu";
+import Menu from "./components/Cart/CartMenu";
 
 // Pages
 import Home from "./pages/Home/Home";
@@ -34,6 +34,8 @@ import "@ionic/react/css/palettes/dark.system.css";
 
 /* Theme */
 import "./theme/variables.css";
+import CheckoutSuccess from "./pages/CheckoutSuccess/CheckoutSuccess";
+import Checkout from "./pages/Checkout/Checkout";
 
 setupIonicReact();
 
@@ -57,6 +59,14 @@ const App: React.FC = () => {
 
             <Route exact path="/product/:id">
               <ProductDetail />
+            </Route>
+
+            <Route exact path="/checkout-success">
+              <CheckoutSuccess />
+            </Route>
+
+            <Route exact path="/checkout">
+              <Checkout />
             </Route>
 
             <Route exact path="/login">
