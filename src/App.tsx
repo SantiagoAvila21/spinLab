@@ -37,51 +37,53 @@ import "./theme/variables.css";
 import CheckoutSuccess from "./pages/CheckoutSuccess/CheckoutSuccess";
 import Checkout from "./pages/Checkout/Checkout";
 import { CartProvider } from "./context/CartContext";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 setupIonicReact();
 
 const App: React.FC = () => {
   return (
     <IonApp>
-      <CartProvider>
-        <IonReactRouter>
-          <IonSplitPane contentId="main">
-            <Menu />
+      <AuthProvider>
+        <CartProvider>
+          <IonReactRouter>
+            <IonSplitPane contentId="main">
+              <Menu />
 
-            <IonRouterOutlet id="main">
-              {/* Redirect root */}
-              <Route exact path="/">
-                <Redirect to="/home" />
-              </Route>
+              <IonRouterOutlet id="main">
+                {/* Redirect root */}
+                <Route exact path="/">
+                  <Redirect to="/home" />
+                </Route>
 
-              {/* Public pages */}
-              <Route exact path="/home">
-                <Home />
-              </Route>
+                {/* Public pages */}
+                <Route exact path="/home">
+                  <Home />
+                </Route>
 
-              <Route exact path="/product/:id">
-                <ProductDetail />
-              </Route>
+                <Route exact path="/product/:id">
+                  <ProductDetail />
+                </Route>
 
-              <Route exact path="/checkout-success">
-                <CheckoutSuccess />
-              </Route>
+                <Route exact path="/checkout-success">
+                  <CheckoutSuccess />
+                </Route>
 
-              <Route exact path="/checkout">
-                <Checkout />
-              </Route>
+                <ProtectedRoute path="/checkout" component={Checkout} exact />
 
-              <Route exact path="/login">
-                <Login />
-              </Route>
+                <Route exact path="/login">
+                  <Login />
+                </Route>
 
-              <Route exact path="/register">
-                <Register />
-              </Route>
-            </IonRouterOutlet>
-          </IonSplitPane>
-        </IonReactRouter>
-      </CartProvider>
+                <Route exact path="/register">
+                  <Register />
+                </Route>
+              </IonRouterOutlet>
+            </IonSplitPane>
+          </IonReactRouter>
+        </CartProvider>
+      </AuthProvider>
     </IonApp>
   );
 };

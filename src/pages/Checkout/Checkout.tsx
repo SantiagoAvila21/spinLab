@@ -9,6 +9,8 @@ import {
   IonList,
   IonLabel,
   IonIcon,
+  IonSpinner,
+  useIonToast,
 } from "@ionic/react";
 import { cardOutline, cashOutline } from "ionicons/icons";
 import AppLayout from "../../components/AppLayout/AppLayout";
@@ -16,21 +18,123 @@ import { useHistory } from "react-router-dom";
 import { useState } from "react";
 import { useCart } from "../../context/CartContext";
 
+// ---- Funciones Helper a validaciones de tarjeta de credito ---
+
+const isValidCardNumber = (value: string) => {
+  const cleaned = value.replace(/\s+/g, "");
+  if (!/^\d{13,19}$/.test(cleaned)) return false;
+
+  let sum = 0;
+  let shouldDouble = false;
+
+  for (let i = cleaned.length - 1; i >= 0; i--) {
+    let digit = parseInt(cleaned[i]);
+
+    if (shouldDouble) {
+      digit *= 2;
+      if (digit > 9) digit -= 9;
+    }
+
+    sum += digit;
+    shouldDouble = !shouldDouble;
+  }
+
+  return sum % 10 === 0;
+};
+
+const isValidExpiry = (value: string) => {
+  if (!/^\d{2}\/\d{2}$/.test(value)) return false;
+
+  const [mm, yy] = value.split("/").map(Number);
+  if (mm < 1 || mm > 12) return false;
+
+  const now = new Date();
+  const expiryDate = new Date(2000 + yy, mm);
+
+  return expiryDate > now;
+};
+
+const isValidCvv = (value: string) => /^\d{3,4}$/.test(value);
+
+const isValidName = (value: string) =>
+  /^[A-Za-zÁÉÍÓÚáéíóúÑñ ]{3,}$/.test(value.trim());
+
+// --- Funciones para el formateo de los inputs ---
+
+const formatCardNumber = (value: string) => {
+  const digitsOnly = value.replace(/\D/g, "").slice(0, 16);
+  return digitsOnly.replace(/(.{4})/g, "$1 ").trim();
+};
+
+const formatExpiry = (value: string) => {
+  const digits = value.replace(/\D/g, "").slice(0, 4);
+
+  if (digits.length <= 2) return digits;
+  return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+};
+
+const formatCvv = (value: string) => value.replace(/\D/g, "").slice(0, 3);
+
 const Checkout: React.FC = () => {
   const history = useHistory();
-  const { cartItems, total } = useCart();
+  const { cartItems, total, clearCart } = useCart();
 
   const [cardNumber, setCardNumber] = useState("");
   const [cardName, setCardName] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const [presentToast] = useIonToast();
+
+  const showToast = (
+    message: string,
+    color: "success" | "danger" = "danger",
+  ) => {
+    presentToast({
+      message,
+      duration: 2000,
+      color,
+      position: "top",
+    });
+  };
 
   const handlePay = () => {
-    history.push("/checkout-success");
+    if (!isValidCardNumber(cardNumber)) {
+      showToast("Número de tarjeta inválido");
+      return;
+    }
+
+    if (!isValidName(cardName)) {
+      showToast("Nombre en la tarjeta inválido");
+      return;
+    }
+
+    if (!isValidExpiry(expiry)) {
+      showToast("Fecha de vencimiento inválida");
+      return;
+    }
+
+    if (!isValidCvv(cvv)) {
+      showToast("CVV inválido");
+      return;
+    }
+
+    setLoading(true);
+
+    setTimeout(() => {
+      setLoading(false);
+      showToast("Pago realizado con éxito 🎉", "success");
+      clearCart();
+
+      setTimeout(() => {
+        history.push("/checkout-success");
+      }, 900);
+    }, 1200);
   };
 
   return (
-    <AppLayout title="Checkout">
+    <AppLayout>
       <IonGrid className="ion-padding">
         <IonRow>
           <IonCol size="12">
@@ -41,9 +145,15 @@ const Checkout: React.FC = () => {
 
             {/* Encabezados */}
             <IonItem lines="none" className="summary-header">
-              <IonLabel color="secondary" className="col-product ">Producto</IonLabel>
-              <IonLabel color="secondary" className="col-qty ion-text-center">Cant.</IonLabel>
-              <IonLabel color="secondary" className="col-price ion-text-end">Precio</IonLabel>
+              <IonLabel color="secondary" className="col-product ">
+                Producto
+              </IonLabel>
+              <IonLabel color="secondary" className="col-qty ion-text-center">
+                Cant.
+              </IonLabel>
+              <IonLabel color="secondary" className="col-price ion-text-end">
+                Precio
+              </IonLabel>
             </IonItem>
 
             {/* Lista de productos */}
@@ -87,8 +197,12 @@ const Checkout: React.FC = () => {
               <IonInput
                 label="Número de tarjeta"
                 labelPlacement="floating"
+                inputmode="numeric"
+                maxlength={19}
                 value={cardNumber}
-                onIonChange={(e) => setCardNumber(e.detail.value!)}
+                onIonInput={(e) =>
+                  setCardNumber(formatCardNumber(e.detail.value ?? ""))
+                }
               />
             </IonItem>
 
@@ -107,8 +221,12 @@ const Checkout: React.FC = () => {
                   <IonInput
                     label="MM/AA"
                     labelPlacement="floating"
+                    inputmode="numeric"
+                    maxlength={5}
                     value={expiry}
-                    onIonChange={(e) => setExpiry(e.detail.value!)}
+                    onIonInput={(e) =>
+                      setExpiry(formatExpiry(e.detail.value ?? ""))
+                    }
                   />
                 </IonItem>
               </IonCol>
@@ -119,8 +237,10 @@ const Checkout: React.FC = () => {
                     label="CVV"
                     labelPlacement="floating"
                     type="password"
+                    inputmode="numeric"
+                    maxlength={3}
                     value={cvv}
-                    onIonChange={(e) => setCvv(e.detail.value!)}
+                    onIonInput={(e) => setCvv(formatCvv(e.detail.value ?? ""))}
                   />
                 </IonItem>
               </IonCol>
@@ -130,9 +250,16 @@ const Checkout: React.FC = () => {
               expand="block"
               className="ion-margin-top"
               onClick={handlePay}
+              disabled={loading}
             >
-              <IonIcon icon={cashOutline} slot="start" />
-              Pagar
+              {loading ? (
+                <IonSpinner name="crescent" />
+              ) : (
+                <>
+                  <IonIcon icon={cashOutline} slot="start" />
+                  Pagar
+                </>
+              )}
             </IonButton>
           </IonCol>
         </IonRow>

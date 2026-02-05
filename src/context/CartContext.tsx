@@ -11,6 +11,7 @@ interface CartContextType {
   decreaseQty: (productId: number) => void;
   total: number;
 	numOfItems: number;
+  clearCart: () => void;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -75,6 +76,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
 
 	const numOfItems = cartItems.reduce((sum, item) => sum + item.quantity, 0)
 
+  const clearCart = () => setCartItems([]);
+
   return (
     <CartContext.Provider
       value={{
@@ -85,6 +88,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         decreaseQty,
         total,
 				numOfItems,
+        clearCart,
       }}
     >
       {children}

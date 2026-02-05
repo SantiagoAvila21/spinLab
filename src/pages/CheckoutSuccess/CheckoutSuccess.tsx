@@ -11,7 +11,7 @@ import AppLayout from "../../components/AppLayout/AppLayout";
 
 const CheckoutSuccess: React.FC = () => {
   return (
-    <AppLayout title="Compra realizada">
+    <AppLayout>
       <IonGrid className="ion-padding ion-text-center">
 
         <IonRow className="ion-justify-content-center ion-margin-top">
@@ -33,8 +33,6 @@ const CheckoutSuccess: React.FC = () => {
             <IonText color="medium">
               <p>
                 Tu pedido ha sido procesado correctamente.
-                <br />
-                <strong>(Compra simulada)</strong>
               </p>
             </IonText>
           </IonCol>
@@ -45,8 +43,6 @@ const CheckoutSuccess: React.FC = () => {
             <IonText>
               <p>
                 Recibirás un correo con el resumen de tu pedido
-                <br />
-                (no realmente 😄).
               </p>
             </IonText>
           </IonCol>

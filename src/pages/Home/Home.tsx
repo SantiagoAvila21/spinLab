@@ -131,7 +131,7 @@ const Home: React.FC = () => {
   };
 
   return (
-    <AppLayout title="SpinLab">
+    <AppLayout>
       <IonText className="ion-text-center ion-margin">
         <h2>Tu lugar para el tenis de mesa</h2>
       </IonText>

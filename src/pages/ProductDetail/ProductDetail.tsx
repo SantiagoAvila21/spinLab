@@ -48,7 +48,7 @@ const ProductDetail: React.FC = () => {
 
   if (!product) {
     return (
-      <AppLayout title="Producto">
+      <AppLayout>
         <IonText className="ion-padding">
           <p>Producto no encontrado</p>
         </IonText>
@@ -57,7 +57,7 @@ const ProductDetail: React.FC = () => {
   }
 
   return (
-    <AppLayout title={product.name}>
+    <AppLayout>
       <IonGrid className="ion-padding">
 
         {/* Imagen */}
