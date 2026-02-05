@@ -11,35 +11,29 @@ import {
   IonBadge,
   IonMenuToggle,
 } from "@ionic/react";
-import { cartOutline, addOutline, removeOutline } from "ionicons/icons";
+import {
+  cartOutline,
+  addOutline,
+  removeOutline,
+  trashOutline,
+} from "ionicons/icons";
 import "./CartMenu.css";
-import { CartItem } from "../../types/CartItem";
-
-const cartItems: CartItem[] = [
-  {
-    id: 1,
-    name: "Raqueta Butterfly Timo Boll ALC",
-    price: 850000,
-    quantity: 1,
-  },
-  {
-    id: 2,
-    name: "Pelotas Butterfly 40+",
-    price: 78000,
-    quantity: 2,
-  },
-];
+import { useCart } from "../../context/CartContext";
 
 const CartMenu: React.FC = () => {
-  const total = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
-  );
+  const {
+    cartItems,
+    increaseQty,
+    decreaseQty,
+    removeFromCart,
+    total,
+  } = useCart();
 
   return (
     <IonMenu menuId="cart-menu" contentId="main" side="end" type="overlay">
       <IonContent className="cart-content">
-        {/* Header del carrito */}
+
+        {/* Header */}
         <div className="cart-header">
           <IonIcon icon={cartOutline} />
           <IonText>
@@ -47,30 +41,63 @@ const CartMenu: React.FC = () => {
           </IonText>
         </div>
 
-        {/* Lista de productos */}
-        <IonList>
-          {cartItems.map((item) => (
-            <IonItem key={item.id} lines="none" className="cart-item">
-              <IonLabel>
-                <h3>{item.name}</h3>
-                <p>${item.price.toLocaleString("es-CO")}</p>
-              </IonLabel>
+        {/* Estado vacío */}
+        {cartItems.length === 0 ? (
+          <div className="cart-empty">
+            <IonIcon icon={cartOutline} />
+            <IonText color="medium">
+              <p>Tu carrito está vacío</p>
+            </IonText>
+          </div>
+        ) : (
+          <IonList>
+            {cartItems.map((item) => (
+              <IonItem key={item.id} lines="none" className="cart-item">
 
-              {/* Contador */}
-              <div className="cart-quantity">
-                <IonButton fill="clear" size="small">
-                  <IonIcon icon={removeOutline} />
-                </IonButton>
+                <IonLabel>
+                  <h3>{item.name}</h3>
+                  <p>${item.price.toLocaleString("es-CO")}</p>
+                </IonLabel>
 
-                <IonBadge>{item.quantity}</IonBadge>
+                {/* Controles */}
+                <div className="cart-actions">
 
-                <IonButton fill="clear" size="small">
-                  <IonIcon icon={addOutline} />
-                </IonButton>
-              </div>
-            </IonItem>
-          ))}
-        </IonList>
+                  {/* Cantidad */}
+                  <div className="cart-quantity">
+                    <IonButton
+                      fill="clear"
+                      size="small"
+                      onClick={() => decreaseQty(item.id)}
+                    >
+                      <IonIcon icon={removeOutline} />
+                    </IonButton>
+
+                    <IonBadge>{item.quantity}</IonBadge>
+
+                    <IonButton
+                      fill="clear"
+                      size="small"
+                      onClick={() => increaseQty(item.id)}
+                    >
+                      <IonIcon icon={addOutline} />
+                    </IonButton>
+                  </div>
+
+                  {/* Eliminar producto */}
+                  <IonButton
+                    fill="clear"
+                    color="danger"
+                    size="small"
+                    onClick={() => removeFromCart(item.id)}
+                  >
+                    <IonIcon icon={trashOutline} />
+                  </IonButton>
+
+                </div>
+              </IonItem>
+            ))}
+          </IonList>
+        )}
       </IonContent>
 
       {/* Footer */}
@@ -81,7 +108,8 @@ const CartMenu: React.FC = () => {
             <strong>${total.toLocaleString("es-CO")}</strong>
           </IonText>
         </div>
-        <IonMenuToggle>  
+
+        <IonMenuToggle>
           <IonButton
             expand="block"
             className="checkout-button"

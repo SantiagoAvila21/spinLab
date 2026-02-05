@@ -36,51 +36,52 @@ import "@ionic/react/css/palettes/dark.system.css";
 import "./theme/variables.css";
 import CheckoutSuccess from "./pages/CheckoutSuccess/CheckoutSuccess";
 import Checkout from "./pages/Checkout/Checkout";
+import { CartProvider } from "./context/CartContext";
 
 setupIonicReact();
 
 const App: React.FC = () => {
   return (
     <IonApp>
-      <IonReactRouter>
-        <IonSplitPane contentId="main">
-          <Menu />
+      <CartProvider>
+        <IonReactRouter>
+          <IonSplitPane contentId="main">
+            <Menu />
 
-          <IonRouterOutlet id="main">
-            {/* Redirect root */}
-            <Route exact path="/">
-              <Redirect to="/home" />
-            </Route>
+            <IonRouterOutlet id="main">
+              {/* Redirect root */}
+              <Route exact path="/">
+                <Redirect to="/home" />
+              </Route>
 
-            {/* Public pages */}
-            <Route exact path="/home">
-              <Home />
-            </Route>
+              {/* Public pages */}
+              <Route exact path="/home">
+                <Home />
+              </Route>
 
-            <Route exact path="/product/:id">
-              <ProductDetail />
-            </Route>
+              <Route exact path="/product/:id">
+                <ProductDetail />
+              </Route>
 
-            <Route exact path="/checkout-success">
-              <CheckoutSuccess />
-            </Route>
+              <Route exact path="/checkout-success">
+                <CheckoutSuccess />
+              </Route>
 
-            <Route exact path="/checkout">
-              <Checkout />
-            </Route>
+              <Route exact path="/checkout">
+                <Checkout />
+              </Route>
 
-            <Route exact path="/login">
-              <Login />
-            </Route>
+              <Route exact path="/login">
+                <Login />
+              </Route>
 
-            <Route exact path="/register">
-              <Register />
-            </Route>
-
-          </IonRouterOutlet>
-
-        </IonSplitPane>
-      </IonReactRouter>
+              <Route exact path="/register">
+                <Register />
+              </Route>
+            </IonRouterOutlet>
+          </IonSplitPane>
+        </IonReactRouter>
+      </CartProvider>
     </IonApp>
   );
 };

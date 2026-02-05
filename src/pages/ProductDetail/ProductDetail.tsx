@@ -12,6 +12,7 @@ import { cartOutline, star } from "ionicons/icons";
 import { useParams } from "react-router";
 import AppLayout from "../../components/AppLayout/AppLayout";
 import { Product } from "../../types/product";
+import { useCart } from "../../context/CartContext";
 
 /**
  * MOCK temporal
@@ -41,6 +42,7 @@ const products: Product[] = [
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { addToCart } = useCart();
 
   const product = products.find((p) => p.id === Number(id));
 
@@ -102,7 +104,7 @@ const ProductDetail: React.FC = () => {
         {/* Botón agregar */}
         <IonRow className="ion-margin-top">
           <IonCol size="12">
-            <IonButton expand="block">
+            <IonButton expand="block" onClick={() => addToCart(product)}>
               <IonIcon icon={cartOutline} slot="start" />
               Agregar al carrito
             </IonButton>

@@ -14,12 +14,11 @@ import { cardOutline, cashOutline } from "ionicons/icons";
 import AppLayout from "../../components/AppLayout/AppLayout";
 import { useHistory } from "react-router-dom";
 import { useState } from "react";
+import { useCart } from "../../context/CartContext";
 
 const Checkout: React.FC = () => {
   const history = useHistory();
-
-  // Simulación de total
-  const total = 185000;
+  const { cartItems, total } = useCart();
 
   const [cardNumber, setCardNumber] = useState("");
   const [cardName, setCardName] = useState("");
@@ -35,26 +34,40 @@ const Checkout: React.FC = () => {
       <IonGrid className="ion-padding">
         <IonRow>
           <IonCol size="12">
-            <IonText>
+            {/* Título */}
+            <IonText className="checkout-section-title">
               <h2>Resumen de la compra</h2>
             </IonText>
 
-            <IonList>
-              <IonItem>
-                <IonLabel>Raqueta Butterfly</IonLabel>
-                <IonText>$120.000</IonText>
-              </IonItem>
+            {/* Encabezados */}
+            <IonItem lines="none" className="summary-header">
+              <IonLabel color="secondary" className="col-product ">Producto</IonLabel>
+              <IonLabel color="secondary" className="col-qty ion-text-center">Cant.</IonLabel>
+              <IonLabel color="secondary" className="col-price ion-text-end">Precio</IonLabel>
+            </IonItem>
 
-              <IonItem>
-                <IonLabel>Gomas DHS</IonLabel>
-                <IonText>$65.000</IonText>
-              </IonItem>
+            {/* Lista de productos */}
+            <IonList className="summary-list">
+              {cartItems.map((item) => (
+                <IonItem key={item.id} lines="none" className="summary-item">
+                  <IonLabel className="col-product">{item.name}</IonLabel>
 
-              <IonItem lines="full">
+                  <IonLabel className="col-qty ion-text-center">
+                    {item.quantity}
+                  </IonLabel>
+
+                  <IonText className="col-price ion-text-end">
+                    ${item.price.toLocaleString("es-CO")}
+                  </IonText>
+                </IonItem>
+              ))}
+
+              {/* Total */}
+              <IonItem lines="full" className="summary-total">
                 <IonLabel>
                   <strong>Total</strong>
                 </IonLabel>
-                <IonText>
+                <IonText slot="end">
                   <strong>${total.toLocaleString("es-CO")}</strong>
                 </IonText>
               </IonItem>
@@ -123,7 +136,6 @@ const Checkout: React.FC = () => {
             </IonButton>
           </IonCol>
         </IonRow>
-
       </IonGrid>
     </AppLayout>
   );

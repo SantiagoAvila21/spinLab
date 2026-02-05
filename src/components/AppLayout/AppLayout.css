@@ -8,3 +8,27 @@
 .app-title:hover {
   opacity: 0.8;
 }
+
+.icon-badge-container {
+  position: relative; 
+  display: flex; 
+}
+
+.cart-button {
+  position: relative;
+  width: 42px;
+  top: 1px;
+  right: 1px;
+  overflow: visible !important;
+}
+
+.cart-badge {
+  background-color: red;
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  height: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
