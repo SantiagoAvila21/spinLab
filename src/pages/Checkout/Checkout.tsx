@@ -17,6 +17,7 @@ import AppLayout from "../../components/AppLayout/AppLayout";
 import { useHistory } from "react-router-dom";
 import { useState } from "react";
 import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext";
 
 // ---- Funciones Helper a validaciones de tarjeta de credito ---
 
@@ -78,6 +79,7 @@ const formatCvv = (value: string) => value.replace(/\D/g, "").slice(0, 3);
 const Checkout: React.FC = () => {
   const history = useHistory();
   const { cartItems, total, clearCart } = useCart();
+  const { user } = useAuth(); // Mantener el usuario que realizo el pedido
 
   const [cardNumber, setCardNumber] = useState("");
   const [cardName, setCardName] = useState("");
@@ -99,7 +101,9 @@ const Checkout: React.FC = () => {
     });
   };
 
-  const handlePay = () => {
+  // Se realiza el pago y se crea el pedido en el backend.
+  // Para esto se envia un POST a /api/store/orders con el JWT del usuario autenticado y los items del carrito
+  const handlePay = async () => {
     if (!isValidCardNumber(cardNumber)) {
       showToast("Número de tarjeta inválido");
       return;
@@ -120,17 +124,51 @@ const Checkout: React.FC = () => {
       return;
     }
 
+    if (!user?.token) {
+      showToast("Debes iniciar sesión para pagar");
+      return;
+    }
+
     setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
-      showToast("Pago realizado con éxito 🎉", "success");
+    try {
+      // Preparamos payload
+      const orderPayload = {
+        items: cartItems.map((item) => ({
+          productId: item.id,
+          quantity: item.quantity,
+        })),
+      };
+
+      const res = await fetch("http://localhost:5297/api/store/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify(orderPayload),
+      });
+
+      if (!res.ok) {
+        const msg = await res.text();
+        throw new Error(msg || "Error al crear el pedido");
+      }
+
+      const order = await res.json();
+      console.log("Pedido creado:", order);
+
+      showToast("Pago realizado y pedido creado 🎉", "success");
       clearCart();
 
       setTimeout(() => {
         history.push("/checkout-success");
       }, 900);
-    }, 1200);
+    } catch (err: unknown) {
+      console.error(err);
+      showToast(err instanceof Error ? err.message : "Error en el pago");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

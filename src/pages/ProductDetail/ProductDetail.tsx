@@ -7,50 +7,58 @@ import {
   IonButton,
   IonIcon,
   IonBadge,
+  IonSpinner,
 } from "@ionic/react";
 import { cartOutline, star } from "ionicons/icons";
 import { useParams } from "react-router";
+import { useEffect, useState } from "react";
 import AppLayout from "../../components/AppLayout/AppLayout";
 import { Product } from "../../types/product";
 import { useCart } from "../../context/CartContext";
 
-/**
- * MOCK temporal
- * Luego esto viene de contexto / API
- */
-const products: Product[] = [
-  {
-    id: 1,
-    name: "Raqueta Butterfly Timo Boll ALC",
-    price: 850000,
-    image:
-      "https://deporteka.com.co/wp-content/uploads/2022/05/35861_01-600x600.webp",
-    category: "Raquetas",
-    rating: 4.8,
-    brand: "Butterfly",
-  },
-  {
-    id: 2,
-    name: "Raqueta DHS Hurricane 301",
-    price: 620000,
-    image: "https://revspin.net/images/blade/dhs-hurricane-301.jpg",
-    category: "Raquetas",
-    rating: 4.6,
-    brand: "DHS",
-  },
-];
+const API_URL = "http://localhost:5297/api/products";
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { addToCart } = useCart();
 
-  const product = products.find((p) => p.id === Number(id));
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!product) {
+  useEffect(() => {
+    if (!id) return;
+
+    setLoading(true);
+    fetch(`${API_URL}/${id}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Producto no encontrado");
+        return res.json();
+      })
+      .then((data: Product) => setProduct(data))
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) {
+    return (
+      <AppLayout>
+        <IonGrid>
+          <IonRow>
+            <IonCol size="12" className="ion-text-center ion-padding">
+              <IonSpinner name="crescent" />
+            </IonCol>
+          </IonRow>
+        </IonGrid>
+      </AppLayout>
+    );
+  }
+
+  if (error || !product) {
     return (
       <AppLayout>
         <IonText className="ion-padding">
-          <p>Producto no encontrado</p>
+          <p>{error ?? "Producto no encontrado"}</p>
         </IonText>
       </AppLayout>
     );

@@ -11,6 +11,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+const API_URL = "http://localhost:5297/api/auth"; 
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -25,32 +27,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = async (email: string, password: string) => {
-    // 🔧 MOCK por ahora (luego backend)
-    const fakeUser: User = {
-      id: 1,
-      name: "Santiago",
-      email,
-      password
+    const res = await fetch(`${API_URL}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!res.ok) {
+      const msg = await res.text();
+      throw new Error(msg || "Error al iniciar sesión");
+    }
+
+    const data = await res.json();
+    // data: { token, name, email }
+    const userData: User = {
+      id: Date.now(), // temporal
+      name: data.name,
+      email: data.email,
+      password: "", // nunca guardamos el password real
+      token: data.token, // guardamos el JWT
     };
 
-    localStorage.setItem("user", JSON.stringify(fakeUser));
-    setUser(fakeUser);
+    localStorage.setItem("authUser", JSON.stringify(userData));
+    setUser(userData);
   };
 
   const register = async (name: string, email: string, password: string) => {
-    const newUser: User = {
-      id: Date.now(),
-      name,
-      email,
-      password
-    };
+    const res = await fetch(`${API_URL}/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
 
-    localStorage.setItem("user", JSON.stringify(newUser));
-    setUser(newUser);
+    if (!res.ok) {
+      const msg = await res.text();
+      throw new Error(msg || "Error al registrar usuario");
+    }
+
+    // Registramos y automáticamente logueamos
+    await login(email, password);
   };
 
   const logout = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("authUser");
     setUser(null);
   };
 
@@ -68,7 +87,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     </AuthContext.Provider>
   );
 };
-
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {

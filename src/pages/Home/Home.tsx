@@ -10,8 +10,9 @@ import {
   IonButton,
   IonIcon,
   IonLabel,
+  IonSpinner,
 } from "@ionic/react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 import { closeCircleOutline } from "ionicons/icons";
 
@@ -19,73 +20,23 @@ import AppLayout from "../../components/AppLayout/AppLayout";
 import { Product } from "../../types/product";
 import ProductCard from "../../components/ProductCard/ProductCard";
 import "./Home.css";
-
-const products: Product[] = [
-  {
-    id: 1,
-    name: "Raqueta Butterfly Timo Boll ALC",
-    price: 850000,
-    image:
-      "https://deporteka.com.co/wp-content/uploads/2022/05/35861_01-600x600.webp",
-    category: "Raquetas",
-    rating: 4.8,
-    brand: "Butterfly",
-  },
-  {
-    id: 2,
-    name: "Raqueta DHS Hurricane 301",
-    price: 620000,
-    image: "https://revspin.net/images/blade/dhs-hurricane-301.jpg",
-    category: "Raquetas",
-    rating: 4.6,
-    brand: "DHS",
-  },
-  {
-    id: 3,
-    name: "Pelotas Butterfly 40+ (6 unidades)",
-    price: 78000,
-    image: "https://revspin.net/images/balls/butterfly-3-star-40-plus-poly.jpg",
-    category: "Pelotas",
-    rating: 4.5,
-    brand: "Butterfly",
-  },
-  {
-    id: 4,
-    name: "Goma DHS Hurricane 3 Neo",
-    price: 145000,
-    image:
-      "https://revspin.net/images/rubber/dhs-neo-hurricane-3-provincial-blue-sponge.jpg",
-    category: "Gomas",
-    rating: 4.7,
-    brand: "DHS",
-  },
-  {
-    id: 5,
-    name: "Mesa de Tenis de Mesa Stiga Advantage",
-    price: 1850000,
-    image:
-      "https://images.weserv.nl/?url=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F715H6LW4MpL.jpg&w=640&q=100&output=webp",
-    category: "Mesas",
-    rating: 4.9,
-    brand: "Stiga",
-  },
-  {
-    id: 6,
-    name: "Estuche Butterfly Doble",
-    price: 98000,
-    image:
-      "https://www.rocayaltura.co/4739-large_default/estuche-butterfly-2-raquetas.jpg",
-    category: "Accesorios",
-    rating: 4.4,
-    brand: "Butterfly",
-  },
-];
+import { fetchProducts } from "../../api/products";
 
 const Home: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedBrand, setSelectedBrand] = useState<string>("all");
   const [selectedSort, setSelectedSort] = useState<string>("");
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    fetchProducts(searchText, selectedCategory, selectedBrand, selectedSort)
+      .then((data) => setProducts(data))
+      .finally(() => setLoading(false));
+  }, [searchText, selectedCategory, selectedBrand, selectedSort]);
 
   // Obtener todos las marcas distintas de cada producto usando un Set
   const categories = Array.from(
@@ -120,7 +71,7 @@ const Home: React.FC = () => {
     }
 
     return filter;
-  }, [searchText, selectedCategory, selectedBrand, selectedSort]);
+  }, [searchText, selectedCategory, selectedBrand, selectedSort, products]);
 
   // Funcion para limpiar los filtros
   const handleClearFilters = () => {
@@ -232,8 +183,12 @@ const Home: React.FC = () => {
 
       {/* Grid de productos */}
       <IonGrid>
-        <IonRow>
-          {filteredProducts.length > 0 ? (
+        <IonRow className="ion-justify-content-center">
+          {loading ? (
+            <IonCol size="12" className="ion-text-center ion-padding">
+              <IonSpinner name="crescent" />
+            </IonCol>
+          ) : filteredProducts.length > 0 ? (
             filteredProducts.map((product) => (
               <IonCol key={product.id} size="6" size-md="6" size-lg="4">
                 <ProductCard product={product} />
