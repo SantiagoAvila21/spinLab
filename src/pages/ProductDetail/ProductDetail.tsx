@@ -15,8 +15,11 @@ import { useEffect, useState } from "react";
 import AppLayout from "../../components/AppLayout/AppLayout";
 import { Product } from "../../types/product";
 import { useCart } from "../../context/CartContext";
+import productsData from "../../data/Products.json";
 
-const API_URL = "http://localhost:5297/api/products";
+// Para efectos practicos, se realizan las validaciones de login/registro contra un JSON local.
+// El backend real se encuentra en el repositorio del proyecto
+// const API_URL = "http://localhost:5297/api/products";
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,6 +33,25 @@ const ProductDetail: React.FC = () => {
     if (!id) return;
 
     setLoading(true);
+
+    const foundProduct = (productsData as unknown as Product[]).find(
+      (p) => String(p.Id) === id,
+    );
+
+    if (!foundProduct) {
+      setError("Producto no encontrado");
+      setProduct(null);
+    } else {
+      setProduct(foundProduct);
+      setError(null);
+    }
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 200);
+
+    // BACKEND (deshabilitado)
+    /*
     fetch(`${API_URL}/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error("Producto no encontrado");
@@ -37,7 +59,7 @@ const ProductDetail: React.FC = () => {
       })
       .then((data: Product) => setProduct(data))
       .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+      .finally(() => setLoading(false)); */
   }, [id]);
 
   if (loading) {
@@ -67,11 +89,10 @@ const ProductDetail: React.FC = () => {
   return (
     <AppLayout>
       <IonGrid className="ion-padding">
-
         {/* Imagen */}
         <IonRow>
           <IonCol size="12">
-            <IonImg src={product.image} alt={product.name} />
+            <IonImg src={product.Image} alt={product.Name} />
           </IonCol>
         </IonRow>
 
@@ -79,20 +100,23 @@ const ProductDetail: React.FC = () => {
         <IonRow className="ion-margin-top">
           <IonCol size="12">
             <IonText>
-              <h2>{product.name}</h2>
+              <h2>{product.Name}</h2>
             </IonText>
 
             <IonText color="primary">
-              <h3>${product.price.toLocaleString("es-CO")}</h3>
+              <h3>${product.Price.toLocaleString("es-CO")}</h3>
             </IonText>
 
             {/* Rating + categoría */}
-            <div className="ion-margin-top" style={{ display: "flex", gap: 12 }}>
+            <div
+              className="ion-margin-top"
+              style={{ display: "flex", gap: 12 }}
+            >
               <IonBadge color="warning">
-                <IonIcon icon={star} /> {product.rating}
+                <IonIcon icon={star} /> {product.Rating}
               </IonBadge>
 
-              <IonBadge color="medium">{product.category}</IonBadge>
+              <IonBadge color="medium">{product.Category}</IonBadge>
             </div>
           </IonCol>
         </IonRow>
@@ -118,7 +142,6 @@ const ProductDetail: React.FC = () => {
             </IonButton>
           </IonCol>
         </IonRow>
-
       </IonGrid>
     </AppLayout>
   );

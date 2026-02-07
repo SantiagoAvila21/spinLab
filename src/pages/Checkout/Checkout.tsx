@@ -19,6 +19,9 @@ import { useState } from "react";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 
+import ordersData from "../../data/Orders.json";
+import orderItemsData from "../../data/OrderItems.json";
+
 // ---- Funciones Helper a validaciones de tarjeta de credito ---
 
 const isValidCardNumber = (value: string) => {
@@ -89,6 +92,7 @@ const Checkout: React.FC = () => {
 
   const [presentToast] = useIonToast();
 
+  console.log(cartItems);
   const showToast = (
     message: string,
     color: "success" | "danger" = "danger",
@@ -104,72 +108,89 @@ const Checkout: React.FC = () => {
   // Se realiza el pago y se crea el pedido en el backend.
   // Para esto se envia un POST a /api/store/orders con el JWT del usuario autenticado y los items del carrito
   const handlePay = async () => {
-    if (!isValidCardNumber(cardNumber)) {
-      showToast("Número de tarjeta inválido");
-      return;
-    }
+  if (!isValidCardNumber(cardNumber)) {
+    showToast("Número de tarjeta inválido");
+    return;
+  }
 
-    if (!isValidName(cardName)) {
-      showToast("Nombre en la tarjeta inválido");
-      return;
-    }
+  if (!isValidName(cardName)) {
+    showToast("Nombre en la tarjeta inválido");
+    return;
+  }
 
-    if (!isValidExpiry(expiry)) {
-      showToast("Fecha de vencimiento inválida");
-      return;
-    }
+  if (!isValidExpiry(expiry)) {
+    showToast("Fecha de vencimiento inválida");
+    return;
+  }
 
-    if (!isValidCvv(cvv)) {
-      showToast("CVV inválido");
-      return;
-    }
+  if (!isValidCvv(cvv)) {
+    showToast("CVV inválido");
+    return;
+  }
 
-    if (!user?.token) {
-      showToast("Debes iniciar sesión para pagar");
-      return;
-    }
+  if (!user) {
+    showToast("Debes iniciar sesión para pagar");
+    return;
+  }
 
-    setLoading(true);
+  setLoading(true);
 
-    try {
-      // Preparamos payload
-      const orderPayload = {
-        items: cartItems.map((item) => ({
-          productId: item.id,
-          quantity: item.quantity,
-        })),
-      };
+  try {
+    const storedOrders = localStorage.getItem("orders");
+    const storedOrderItems = localStorage.getItem("orderItems");
 
-      const res = await fetch("http://localhost:5297/api/store/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-        body: JSON.stringify(orderPayload),
-      });
+    const orders = storedOrders
+      ? JSON.parse(storedOrders)
+      : ordersData;
 
-      if (!res.ok) {
-        const msg = await res.text();
-        throw new Error(msg || "Error al crear el pedido");
-      }
+    const orderItems = storedOrderItems
+      ? JSON.parse(storedOrderItems)
+      : orderItemsData;
 
-      const order = await res.json();
-      console.log("Pedido creado:", order);
+    // ---- 2. Crear nuevo pedido ----
+    const newOrderId =
+      orders.length > 0
+        ? Math.random() * 1000000
+        : 1;
 
-      showToast("Pago realizado y pedido creado 🎉", "success");
-      clearCart();
+    const newOrder = {
+      Id: newOrderId,
+      UserId: user.id,
+      Total: total,
+      CreatedAt: new Date().toISOString(),
+    };
 
-      setTimeout(() => {
-        history.push("/checkout-success");
-      }, 900);
-    } catch (err: unknown) {
-      console.error(err);
-      showToast(err instanceof Error ? err.message : "Error en el pago");
-    } finally {
-      setLoading(false);
-    }
-  };
+    const newOrderItems = cartItems.map((item) => ({
+      Id: orderItems.length + Math.random(),
+      OrderId: newOrderId,
+      ProductId: item.id,
+      Quantity: item.quantity,
+      Price: item.price,
+    }));
+
+    localStorage.setItem(
+      "orders",
+      JSON.stringify([...orders, newOrder])
+    );
+
+    localStorage.setItem(
+      "orderItems",
+      JSON.stringify([...orderItems, ...newOrderItems])
+    );
+
+    showToast("Pago realizado y pedido creado ", "success");
+    clearCart();
+
+    setTimeout(() => {
+      history.push("/checkout-success");
+    }, 900);
+  } catch (err) {
+    console.error(err);
+    showToast("Error al procesar el pago");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <AppLayout>

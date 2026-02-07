@@ -33,41 +33,42 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetchProducts(searchText, selectedCategory, selectedBrand, selectedSort)
+    fetchProducts()
       .then((data) => setProducts(data))
       .finally(() => setLoading(false));
-  }, [searchText, selectedCategory, selectedBrand, selectedSort]);
-
+    }, []);
+    
+    console.log(products);
   // Obtener todos las marcas distintas de cada producto usando un Set
   const categories = Array.from(
-    new Set(products.map((product) => product.category)),
+    new Set(products.map((product) => product.Category)),
   );
   // Obtener todas las categorías distintas de cada producto usando un Set
-  const brands = Array.from(new Set(products.map((product) => product.brand)));
+  const brands = Array.from(new Set(products.map((product) => product.Brand)));
 
   // Se realiza primero el filtrado por nombre, luego por categoria y finalmente por marca
   // El resultado es la interseccion de los tres filtros
   const filteredProducts = useMemo(() => {
     let filter = products
       .filter((product) =>
-        product.name.toLowerCase().includes(searchText.toLowerCase()),
+        product.Name.toLowerCase().includes(searchText.toLowerCase()),
       )
       .filter((product) =>
         selectedCategory === "all"
           ? true
-          : product.category === selectedCategory,
+          : product.Category === selectedCategory,
       )
       .filter((product) =>
-        selectedBrand === "all" ? true : product.brand === selectedBrand,
+        selectedBrand === "all" ? true : product.Brand === selectedBrand,
       );
 
     // Aplicar el orden seleccionado
     if (selectedSort === "price-asc") {
-      filter = filter.sort((a, b) => a.price - b.price);
+      filter = filter.sort((a, b) => a.Price - b.Price);
     } else if (selectedSort === "price-desc") {
-      filter = filter.sort((a, b) => b.price - a.price);
+      filter = filter.sort((a, b) => b.Price - a.Price);
     } else if (selectedSort === "rating-desc") {
-      filter = filter.sort((a, b) => b.rating - a.rating);
+      filter = filter.sort((a, b) => b.Rating - a.Rating);
     }
 
     return filter;
@@ -190,7 +191,7 @@ const Home: React.FC = () => {
             </IonCol>
           ) : filteredProducts.length > 0 ? (
             filteredProducts.map((product) => (
-              <IonCol key={product.id} size="6" size-md="6" size-lg="4">
+              <IonCol key={product.Id} size="6" size-md="6" size-lg="4">
                 <ProductCard product={product} />
               </IonCol>
             ))

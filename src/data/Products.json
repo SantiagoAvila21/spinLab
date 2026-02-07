@@ -1,0 +1,56 @@
+[
+    {
+        "Brand": "Butterfly",
+        "Category": "Raquetas",
+        "Id": 1,
+        "Image": "https://deporteka.com.co/wp-content/uploads/2022/05/35861_01-600x600.webp",
+        "Name": "Raqueta Butterfly Timo Boll ALC",
+        "Price": "850000.0",
+        "Rating": 4.8
+    },
+    {
+        "Brand": "DHS",
+        "Category": "Raquetas",
+        "Id": 2,
+        "Image": "https://revspin.net/images/blade/dhs-hurricane-301.jpg",
+        "Name": "Raqueta DHS Hurricane 301",
+        "Price": "620000.0",
+        "Rating": 4.6
+    },
+    {
+        "Brand": "Butterfly",
+        "Category": "Pelotas",
+        "Id": 3,
+        "Image": "https://revspin.net/images/balls/butterfly-3-star-40-plus-poly.jpg",
+        "Name": "Pelotas Butterfly 40+ (6 unidades)",
+        "Price": "78000.0",
+        "Rating": 4.5
+    },
+    {
+        "Brand": "DHS",
+        "Category": "Gomas",
+        "Id": 4,
+        "Image": "https://revspin.net/images/rubber/dhs-neo-hurricane-3-provincial-blue-sponge.jpg",
+        "Name": "Goma DHS Hurricane 3 Neo",
+        "Price": "145000.0",
+        "Rating": 4.7
+    },
+    {
+        "Brand": "Stiga",
+        "Category": "Mesas",
+        "Id": 5,
+        "Image": "https://images.weserv.nl/?url=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F715H6LW4MpL.jpg&w=640&q=100&output=webp",
+        "Name": "Mesa de Tenis de Mesa Stiga Advantage",
+        "Price": "1850000.0",
+        "Rating": 4.9
+    },
+    {
+        "Brand": "Butterfly",
+        "Category": "Accesorios",
+        "Id": 6,
+        "Image": "https://www.rocayaltura.co/4739-large_default/estuche-butterfly-2-raquetas.jpg",
+        "Name": "Estuche Butterfly Doble",
+        "Price": "98000.0",
+        "Rating": 4.4
+    }
+]

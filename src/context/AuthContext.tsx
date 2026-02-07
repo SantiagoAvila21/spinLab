@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { User } from "../types/User";
+import usersData from "../data/Users.json";
+import { getFromStorage, saveToStorage } from "../utils/storage";
 
 interface AuthContextType {
   user: User | null;
@@ -9,9 +11,18 @@ interface AuthContextType {
   register: (name: string, email: string, password: string) => Promise<void>;
 }
 
+interface UserJson {
+  Id: number;
+  Name: string;
+  Email: string;
+  Password: string;
+}
+
 const AuthContext = createContext<AuthContextType | null>(null);
 
-const API_URL = "http://localhost:5297/api/auth"; 
+// Para efectos practicos, se realizan las validaciones de login/registro contra un JSON local.
+// El backend real se encuentra en el repositorio del proyecto
+// const API_URL = "http://localhost:5297/api/auth";
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -26,46 +37,73 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
+  // Funciones propias del contexto de autenticación: login, register y logout
   const login = async (email: string, password: string) => {
-    const res = await fetch(`${API_URL}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+    // BACKEND (deshabilitado)
+    /*
+  const res = await fetch(`${API_URL}/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  */
 
-    if (!res.ok) {
-      const msg = await res.text();
-      throw new Error(msg || "Error al iniciar sesión");
+    // MOCK LOCAL (JSON)
+    const users = getFromStorage<UserJson[]>("users", usersData as UserJson[]);
+
+    const foundUser = users.find(
+      (u) => u.Email === email && u.Password === password,
+    );
+
+    if (!foundUser) {
+      throw new Error("Credenciales inválidas");
     }
 
-    const data = await res.json();
-    // data: { token, name, email }
-    const userData: User = {
-      id: Date.now(), // temporal
-      name: data.name,
-      email: data.email,
-      password: "", // nunca guardamos el password real
-      token: data.token, // guardamos el JWT
+    const authUser: User = {
+      id: foundUser.Id,
+      name: foundUser.Name,
+      email: foundUser.Email,
     };
 
-    localStorage.setItem("authUser", JSON.stringify(userData));
-    setUser(userData);
+    saveToStorage("authUser", authUser);
+    setUser(authUser);
   };
 
   const register = async (name: string, email: string, password: string) => {
-    const res = await fetch(`${API_URL}/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
-    });
+    // BACKEND (deshabilitado)
+    /*
+  const res = await fetch(`${API_URL}/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email, password }),
+  });
+  */
 
-    if (!res.ok) {
-      const msg = await res.text();
-      throw new Error(msg || "Error al registrar usuario");
+    // MOCK
+    const users = getFromStorage<UserJson[]>("users", usersData as UserJson[]);
+
+    if (users.some((u) => u.Email === email)) {
+      throw new Error("El correo ya está registrado");
     }
 
-    // Registramos y automáticamente logueamos
-    await login(email, password);
+    const newUser: UserJson = {
+      Id: Date.now(),
+      Name: name,
+      Email: email,
+      Password: password,
+    };
+
+    const updatedUsers = [...users, newUser];
+    saveToStorage("users", updatedUsers);
+
+    const authUser: User = {
+      id: newUser.Id,
+      name: newUser.Name,
+      email: newUser.Email,
+    };
+
+    saveToStorage("authUser", authUser);
+    setUser(authUser);
   };
 
   const logout = () => {

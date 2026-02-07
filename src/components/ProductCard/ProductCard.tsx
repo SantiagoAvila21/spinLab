@@ -15,19 +15,19 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <IonCard
-      routerLink={`/product/${product.id}`}
+      routerLink={`/product/${product.Id}`}
       button
       className="product-card"
     >
-      <IonImg src={product.image} alt={product.name} />
+      <IonImg src={product.Image} alt={product.Name} />
 
       <IonCardHeader>
-        <IonCardTitle className="product-name">{product.name}</IonCardTitle>
+        <IonCardTitle className="product-name">{product.Name}</IonCardTitle>
       </IonCardHeader>
 
       <IonCardContent>
         <h2 className="product-price">
-          ${product.price.toLocaleString("es-CO")}
+          ${product.Price.toLocaleString("es-CO")}
         </h2>
       </IonCardContent>
     </IonCard>

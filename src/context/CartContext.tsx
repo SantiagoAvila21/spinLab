@@ -24,17 +24,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   // Se añade un producto al carrito y si ya existe, se incrementa la cantidad del CartItem especifico
   const addToCart = (product: Product) => {
     setCartItems((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
+      const existing = prev.find((item) => item.id === product.Id);
       const newItem: CartItem = {
-        id: product.id,
-        name: product.name,
-        price: product.price,
+        id: product.Id,
+        name: product.Name,
+        price: product.Price,
         quantity: 1,
       };
 
       if (existing) {
         return prev.map((item) =>
-          item.id === product.id
+          item.id === product.Id
             ? { ...item, quantity: item.quantity + 1 }
             : item,
         );
