@@ -89,7 +89,7 @@ const Home: React.FC = () => {
       </IonText>
 
       <IonImg
-        src="../../../public/assets/pingpongGif.gif"
+        src="./assets/pingpongGif.gif"
         alt="Tenis de mesa promo"
         className="ion-margin"
       />
